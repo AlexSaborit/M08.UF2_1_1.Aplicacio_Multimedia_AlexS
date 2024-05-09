@@ -1,18 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    android:orientation="vertical"
+    android:padding="10dp">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:text="Aplicació multimèdia Alex Saborit"
+        android:padding="10dp" />
+    <Button
+        android:id="@+id/btnCrearTxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Crear arxiu de text"
+        android:padding="10dp" />
+    <Button
+        android:id="@+id/btnCapturarFoto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Capturar una foto amb la càmera"
+        android:padding="10dp" />
+    <Button
+        android:id="@+id/btnCapturarVideo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Capturar un vídeo amb la càmera"
+        android:padding="10dp" />
+    <Button
+        android:id="@+id/btnCapturarSo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Capturar so"
+        android:padding="10dp" />
+    <Button
+        android:id="@+id/btnVisualitzarReproduir"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Visualització - reproducció d'arxiu."
+        android:padding="10dp" />
+    <Button
+        android:id="@+id/btnServeisOnline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Serveis online"
+        android:padding="10dp" />
+    <Button
+        android:id="@+id/btnX"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="btnX"
+        android:padding="10dp" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+</LinearLayout>
