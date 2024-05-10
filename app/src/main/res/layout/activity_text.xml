@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Text_Activity"
+    android:orientation="vertical"
+    android:padding="2mm">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="1mm"
+        android:text="Escriu un text:"/>
+
+    <EditText
+        android:id="@+id/etText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="1mm"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="1mm"
+        android:text="Escriu el nom de l'arxiu de text:"/>
+
+    <EditText
+        android:id="@+id/etNomArxiu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="1mm"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="1mm"
+        android:text="Escull l'estil del text:"/>
+    <RadioGroup
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <RadioButton
+            android:id="@+id/rbNormal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="1mm"
+            android:text="Normal"/>
+        <RadioButton
+            android:id="@+id/rbNegreta"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="1mm"
+            android:text="Negreta"
+            android:textStyle="bold"/>
+        <RadioButton
+            android:id="@+id/rbCursiva"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="1mm"
+            android:text="Cursiva"
+            android:textStyle="italic"/>
+    </RadioGroup>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="1mm"
+        android:text="Escull la mida del text:"/>
+    <RadioGroup
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <RadioButton
+            android:id="@+id/rbPetita"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="1mm"
+            android:text="Petita"
+            android:textSize="10dp"/>
+        <RadioButton
+            android:id="@+id/rbMitjana"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="1mm"
+            android:text="Mitjana"/>
+        <RadioButton
+            android:id="@+id/rbGran"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="1mm"
+            android:text="Gran"
+            android:textSize="20dp"/>
+    </RadioGroup>
+
+    <Button
+        android:id="@+id/btnPrevisualitzar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="1mm"
+        android:text="Previsualitzar"/>
+    <TextView
+        android:id="@+id/tvPrevisualitzar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="1mm"
+        android:text="Aquí es mostrarà la previsualització del text a desar."
+        />
+
+
+    <Button
+        android:id="@+id/btnDesarArxiu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="1mm"
+        android:text="Desar arxiu"/>
+
+</LinearLayout>

@@ -13,6 +13,9 @@
         android:theme="@style/Theme.AplicacioMultimediaAlexS"
         tools:targetApi="31">
         <activity
+            android:name=".Text_Activity"
+            android:exported="false" />
+        <activity
             android:name=".Visualitzar_Reproduir_Editar"
             android:exported="false" />
         <activity
