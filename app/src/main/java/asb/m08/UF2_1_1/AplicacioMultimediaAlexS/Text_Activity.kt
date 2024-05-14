@@ -1,14 +1,17 @@
 package asb.m08.UF2_1_1.AplicacioMultimediaAlexS
 
-import android.app.Activity
+import android.graphics.Typeface
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.TypedValue
 import android.widget.Button
 import android.widget.EditText
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.TextView
-import android.widget.Toast
+import asb.m08.UF2_1_1.AplicacioMultimediaAlexS.Classes.Text
+import asb.m08.UF2_1_1.AplicacioMultimediaAlexS.Objectes.Permanent
+import asb.m08.UF2_1_1.AplicacioMultimediaAlexS.Objectes.Txt_IO
 
 class Text_Activity : AppCompatActivity() {
     var estilNormal: Boolean = false
@@ -16,8 +19,9 @@ class Text_Activity : AppCompatActivity() {
     var estilCursiva: Boolean = false
 
     var fontPetita: Boolean = false
-    var fontNormal: Boolean = false
+    var fontMitjana: Boolean = false
     var fontGran: Boolean = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_text)
@@ -53,32 +57,76 @@ class Text_Activity : AppCompatActivity() {
                 estilNegreta = false
                 estilCursiva = true
             }
-            //TODO(crida a funció per actualitzar la previsualització)
+            previsualitzar()
         }
         rgMida.setOnCheckedChangeListener { group, checkedId ->
             if (rbPetita.isChecked) {
                 fontPetita = true
-                fontNormal = false
+                fontMitjana = false
                 fontGran = false
             }
-            if (rbNormal.isChecked) {
+            if (rbMitjana.isChecked) {
                 fontPetita = false
-                fontNormal = true
+                fontMitjana = true
                 fontGran = false
             }
             if (rbGran.isChecked) {
                 fontPetita = false
-                fontNormal = false
+                fontMitjana = false
                 fontGran = true
             }
-            //TODO(crida a funció per actualitzar la previsualització)
+            previsualitzar()
         }
         btnPrevisualitzar.setOnClickListener {
-            Toast.makeText(this, "Has premut el botó!", Toast.LENGTH_SHORT).show()
-            //TODO(crida a funció per actualitzar la previsualització)
+            previsualitzar()
         }
         btnDesarArxiu.setOnClickListener {
-            Toast.makeText(this, "Has premut el botó!", Toast.LENGTH_SHORT).show()
+            var mida = Txt_IO.TextSize.MITJANA
+            if (fontPetita) {
+                mida = Txt_IO.TextSize.PETITA
+            } else if (fontGran) {
+                mida = Txt_IO.TextSize.GRAN
+            }
+
+            var estil = Txt_IO.TextStyle.NORMAL
+            if(estilCursiva) {
+                estil = Txt_IO.TextStyle.CURSIVA
+            } else if (estilNegreta) {
+                estil = Txt_IO.TextStyle.NEGRETA
+            }
+            val etText = findViewById<EditText>(R.id.etText)
+            val etNomArxiu = findViewById<EditText>(R.id.etNomArxiu)
+            val text = Text(etText.text.toString(),estil, mida)//TODO (no escullo el nom que ha de tenir l'arxiu)
+
+            var textosLocal = Txt_IO.TextFileHandler(Permanent.textDir).readLines()
+            textosLocal.add(text)
+            Txt_IO.TextFileHandler(Permanent.textDir).writeLines(textosLocal)
+        }
+    }
+
+    private fun previsualitzar() {
+
+        val etText = findViewById<EditText>(R.id.etText)
+        val tvPrevisualitzar = findViewById<TextView>(R.id.tvPrevisualitzar)
+
+        tvPrevisualitzar.text = etText.text
+        if (fontPetita) {
+            tvPrevisualitzar.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10f)
+        }
+        if (fontMitjana) {
+            tvPrevisualitzar.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15f)
+        }
+        if (fontGran) {
+            tvPrevisualitzar.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20f)
+        }
+        if (estilNormal) {
+            tvPrevisualitzar.setTypeface(null, Typeface.NORMAL)
+        }
+        if (estilCursiva) {
+            tvPrevisualitzar.setTypeface(null, Typeface.ITALIC)
+        }
+        if (estilNegreta) {
+            tvPrevisualitzar.setTypeface(null, Typeface.BOLD)
         }
     }
 
@@ -94,13 +142,9 @@ class Text_Activity : AppCompatActivity() {
 
     private fun inicialitzarActivity() {
         resetCamps()
-
-        var textNormal = true
-        var textNegreta = false
-        var textCursiva = false
-
-        var fontPetita = false
-        var fontNormal = true
-        var fontGran = false
+        val rbNormal = findViewById<RadioButton>(R.id.rbNormal)
+        val rbMitjana = findViewById<RadioButton>(R.id.rbMitjana)
+        rbNormal.isChecked = true;
+        rbMitjana.isChecked = true;
     }
 }
