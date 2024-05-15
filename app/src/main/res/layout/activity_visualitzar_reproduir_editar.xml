@@ -6,7 +6,26 @@
     tools:context=".Visualitzar_Reproduir_Editar"
     android:orientation="vertical"
     android:layout_margin="10dp">
-    <Button
+    <ImageView
+        android:id="@+id/image_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
+    <VideoView
+        android:id="@+id/video_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/text_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp"
+        android:textSize="16sp"
+        android:visibility="gone" />
+    <!--Button
         android:id="@+id/btnVisualitzarEditarText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -29,6 +48,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Reproduir video"
-        android:padding="10dp" />
+        android:padding="10dp" /-->
 
 </LinearLayout>

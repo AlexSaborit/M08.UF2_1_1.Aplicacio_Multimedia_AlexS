@@ -11,6 +11,11 @@ import asb.m08.UF2_1_1.AplicacioMultimediaAlexS.Objectes.Picture_IO
 import asb.m08.UF2_1_1.AplicacioMultimediaAlexS.Objectes.Video_IO
 
 class MainActivity : AppCompatActivity() {
+
+    companion object {
+        const val REQUEST_CODE_CERCAR_ARXIU = 1
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -27,8 +32,6 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
         btnCapturarFoto.setOnClickListener {
-            //val intent = Intent(this, Cam_Activity::class.java)
-            //startActivity(intent)
             Picture_IO.startImageCaptureProcess(this)
         }
         btnCapturarVideo.setOnClickListener {
@@ -38,14 +41,16 @@ class MainActivity : AppCompatActivity() {
             Audio_IO.startAudioCaptureProcess(this)
         }
         btnVisualitzarReproduir.setOnClickListener {
-            Toast.makeText(this, "Has premut el botó!", Toast.LENGTH_SHORT).show()
-            //TODO(crida a activity per visualitzar i reproduir)
+            val intent = Intent(this, CercarArxius::class.java)
+            intent.putExtra("TIPUS_ARXIU", "text") // TODO (Canviar això per especificar el tipus d'arxiu)
+            startActivityForResult(intent, REQUEST_CODE_CERCAR_ARXIU)
         }
         btnServeisOnline.setOnClickListener {
-            Toast.makeText(this, "Has premut el botó!", Toast.LENGTH_SHORT).show()
-            //TODO(crida a funció per obrir activity se serveis online)
+            val intent = Intent(this, ServeisOnline::class.java)
+            startActivity(intent)
         }
     }
+
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
@@ -91,6 +96,15 @@ class MainActivity : AppCompatActivity() {
             Audio_IO.handleActivityResult(this, requestCode, resultCode, data)
         } else if (requestCode == Video_IO.REQUEST_VIDEO_CAPTURE) {
             Video_IO.handleActivityResult(this, requestCode, resultCode, data)
+        } else if (requestCode == REQUEST_CODE_CERCAR_ARXIU && resultCode == RESULT_OK) {
+            val arxiuSeleccionat = data?.getStringExtra("ARXIU_SELECCIONAT")
+            val tipusArxiu = data?.getStringExtra("TIPUS_ARXIU")
+            if (arxiuSeleccionat != null && tipusArxiu != null) {
+                val intent = Intent(this, Visualitzar_Reproduir_Editar::class.java)
+                intent.putExtra("ARXIU_SELECCIONAT", arxiuSeleccionat)
+                intent.putExtra("TIPUS_ARXIU", tipusArxiu)
+                startActivity(intent)
+            }
         }
     }
 }

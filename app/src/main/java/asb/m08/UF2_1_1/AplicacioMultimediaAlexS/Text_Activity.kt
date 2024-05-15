@@ -6,15 +6,29 @@ import android.os.Bundle
 import android.util.TypedValue
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.TextView
 import android.widget.Toast
 import asb.m08.UF2_1_1.AplicacioMultimediaAlexS.Classes.Text
-import asb.m08.UF2_1_1.AplicacioMultimediaAlexS.Objectes.Permanent
 import asb.m08.UF2_1_1.AplicacioMultimediaAlexS.Objectes.Txt_IO
 
 class Text_Activity : AppCompatActivity() {
+    lateinit var etText: EditText
+    lateinit var etNomArxiu: EditText
+    lateinit var rgEstil: RadioGroup
+    lateinit var rbNormal: RadioButton
+    lateinit var rbNegreta: RadioButton
+    lateinit var rbCursiva: RadioButton
+    lateinit var rgMida: RadioGroup
+    lateinit var rbPetita: RadioButton
+    lateinit var rbMitjana: RadioButton
+    lateinit var rbGran: RadioButton
+    lateinit var btnPrevisualitzar: Button
+    lateinit var btnDesarArxiu: Button
+    lateinit var tvPrevisualitzar: TextView
+
     var estilNormal: Boolean = false
     var estilNegreta: Boolean = false
     var estilCursiva: Boolean = false
@@ -29,19 +43,19 @@ class Text_Activity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_text)
 
-        val etText = findViewById<EditText>(R.id.etText)
-        val etNomArxiu = findViewById<EditText>(R.id.etNomArxiu)
-        val rgEstil = findViewById<RadioGroup>(R.id.rgEstil)
-        val rbNormal = findViewById<RadioButton>(R.id.rbNormal)
-        val rbNegreta = findViewById<RadioButton>(R.id.rbNegreta)
-        val rbCursiva = findViewById<RadioButton>(R.id.rbCursiva)
-        val rgMida = findViewById<RadioGroup>(R.id.rgMida)
-        val rbPetita = findViewById<RadioButton>(R.id.rbPetita)
-        val rbMitjana = findViewById<RadioButton>(R.id.rbMitjana)
-        val rbGran = findViewById<RadioButton>(R.id.rbGran)
-        val btnPrevisualitzar = findViewById<Button>(R.id.btnPrevisualitzar)
-        val tvPrevisualitzar = findViewById<TextView>(R.id.tvPrevisualitzar)
-        val btnDesarArxiu = findViewById<Button>(R.id.btnDesarArxiu)
+        etText = findViewById(R.id.etText)
+        etNomArxiu = findViewById(R.id.etNomArxiu)
+        rgEstil = findViewById(R.id.rgEstil)
+        rbNormal = findViewById(R.id.rbNormal)
+        rbNegreta = findViewById(R.id.rbNegreta)
+        rbCursiva = findViewById(R.id.rbCursiva)
+        rgMida = findViewById(R.id.rgMida)
+        rbPetita = findViewById(R.id.rbPetita)
+        rbMitjana = findViewById(R.id.rbMitjana)
+        rbGran = findViewById(R.id.rbGran)
+        btnPrevisualitzar = findViewById(R.id.btnPrevisualitzar)
+        btnDesarArxiu = findViewById(R.id.btnDesarArxiu)
+        tvPrevisualitzar = findViewById(R.id.tvPrevisualitzar)
 
         inicialitzarActivity()
         rgEstil.setOnCheckedChangeListener { group, checkedId ->
@@ -85,9 +99,7 @@ class Text_Activity : AppCompatActivity() {
         }
         btnDesarArxiu.setOnClickListener {
             var escrit = false
-            val etText = findViewById<EditText>(R.id.etText)
             if (!etText.text.isNullOrEmpty()){
-                val etNomArxiu = findViewById<EditText>(R.id.etNomArxiu)
                 if (!etNomArxiu.text.isNullOrEmpty()) {
                     var mida = Txt_IO.TextSize.MITJANA
                     if (fontPetita) {
@@ -120,11 +132,8 @@ class Text_Activity : AppCompatActivity() {
             }
         }
     }
-
     private fun previsualitzar() {
-        val etText = findViewById<EditText>(R.id.etText)
         if (!etText.text.isNullOrEmpty()){
-            val tvPrevisualitzar = findViewById<TextView>(R.id.tvPrevisualitzar)
 
             tvPrevisualitzar.text = etText.text
             if (fontPetita) {
@@ -149,7 +158,6 @@ class Text_Activity : AppCompatActivity() {
             Toast.makeText(this, "El text no pot estar en blanc", Toast.LENGTH_SHORT).show()
         }
     }
-
     private fun resetCamps() {
         var textNormal = false
         var textNegreta = false
@@ -159,11 +167,8 @@ class Text_Activity : AppCompatActivity() {
         var fontNormal = false
         var fontGran = false
 
-        val etText = findViewById<EditText>(R.id.etText)
         etText.setText("")
-        val etNomArxiu = findViewById<EditText>(R.id.etNomArxiu)
         etNomArxiu.setText("")
-        val tvPrevisualitzar = findViewById<TextView>(R.id.tvPrevisualitzar)
         tvPrevisualitzar.setText("")
     }
 

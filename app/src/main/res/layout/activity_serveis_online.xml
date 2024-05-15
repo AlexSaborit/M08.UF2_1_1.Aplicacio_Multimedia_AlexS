@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ServeisOnline"
+    android:padding="16dp"
+    android:orientation="vertical">
+
+    <EditText
+        android:id="@+id/editTextGoogleMaps"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Adreça per Google Maps" />
+
+    <Button
+        android:id="@+id/btnGoogleMaps"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Obrir Google Maps" />
+
+    <EditText
+        android:id="@+id/editTextWikipedia"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Article de Wikipedia" />
+
+    <Button
+        android:id="@+id/btnWikipedia"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Obrir Wikipedia" />
+
+    <EditText
+        android:id="@+id/editTextXarxesSocials"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="URL per compartir" />
+
+    <Button
+        android:id="@+id/btnXarxesSocials"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Compartir URL a Xarxes Socials" />
+
+</LinearLayout>
