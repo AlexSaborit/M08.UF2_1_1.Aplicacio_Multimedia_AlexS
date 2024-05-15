@@ -24,10 +24,17 @@ class CercarArxius : AppCompatActivity() {
 
             listView.setOnItemClickListener { _, _, position, _ ->
                 val arxiuSeleccionat = arxius[position]
-                val intent = Intent()
-                intent.putExtra("ARXIU_SELECCIONAT", arxiuSeleccionat)
-                intent.putExtra("TIPUS_ARXIU", tipusArxiu)
-                setResult(RESULT_OK, intent)
+                val nomArxiuSeleccionat = arxiuSeleccionat.substringAfterLast("/")
+                if (tipusArxiu == "text") {
+                    val intent = Intent(this, Text_Activity::class.java)
+                    intent.putExtra("ARXIU_SELECCIONAT", nomArxiuSeleccionat)
+                    startActivity(intent)
+                } else {
+                    val intent = Intent()
+                    intent.putExtra("ARXIU_SELECCIONAT", nomArxiuSeleccionat)
+                    intent.putExtra("TIPUS_ARXIU", tipusArxiu)
+                    startActivity(intent)
+                }
                 finish()
             }
         } else {

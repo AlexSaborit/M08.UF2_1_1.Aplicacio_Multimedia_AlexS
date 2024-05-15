@@ -48,12 +48,5 @@
         android:layout_height="wrap_content"
         android:text="Serveis online"
         android:padding="10dp" />
-    <Button
-        android:id="@+id/btnX"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="btnX"
-        android:padding="10dp" />
-
 
 </LinearLayout>

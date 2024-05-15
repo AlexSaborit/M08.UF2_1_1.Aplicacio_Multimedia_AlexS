@@ -41,9 +41,8 @@ class MainActivity : AppCompatActivity() {
             Audio_IO.startAudioCaptureProcess(this)
         }
         btnVisualitzarReproduir.setOnClickListener {
-            val intent = Intent(this, CercarArxius::class.java)
-            intent.putExtra("TIPUS_ARXIU", "text") // TODO (Canviar això per especificar el tipus d'arxiu)
-            startActivityForResult(intent, REQUEST_CODE_CERCAR_ARXIU)
+            val intent = Intent(this, Tria_Arxiu::class.java)
+            startActivity(intent)
         }
         btnServeisOnline.setOnClickListener {
             val intent = Intent(this, ServeisOnline::class.java)

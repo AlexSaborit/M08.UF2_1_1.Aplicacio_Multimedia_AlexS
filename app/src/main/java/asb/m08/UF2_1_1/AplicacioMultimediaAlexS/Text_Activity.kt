@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.util.TypedValue
 import android.widget.Button
 import android.widget.EditText
-import android.widget.ImageView
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.TextView
@@ -39,6 +38,8 @@ class Text_Activity : AppCompatActivity() {
 
     val extensioArxiu = ".txt"
 
+    var visualitzarEditar = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_text)
@@ -58,6 +59,25 @@ class Text_Activity : AppCompatActivity() {
         tvPrevisualitzar = findViewById(R.id.tvPrevisualitzar)
 
         inicialitzarActivity()
+
+        // Carrega el contingut del fitxer seleccionat si existeix
+        val arxiuSeleccionat = intent.getStringExtra("ARXIU_SELECCIONAT")
+        if (arxiuSeleccionat != null) {
+            visualitzarEditar = true
+            val textObjectRebut = Txt_IO.TextFileHandler().readText(arxiuSeleccionat)
+
+            //val arxiu = File(rutaFitxerTextRebut)
+            //val nomArxiu = File(rutaFitxerTextRebut).name
+
+            if (textObjectRebut != null) {
+                etText.setText(textObjectRebut.text)
+                establirBooleans(textObjectRebut)
+            }
+
+            etNomArxiu.setText(arxiuSeleccionat.substringAfterLast('/').substringBeforeLast('.'))
+            etNomArxiu.isEnabled = false
+        }
+
         rgEstil.setOnCheckedChangeListener { group, checkedId ->
             if (rbNormal.isChecked) {
                 estilNormal = true
@@ -117,7 +137,7 @@ class Text_Activity : AppCompatActivity() {
 
                     val text = Text(etText.text.toString(),estil, mida)
                     val nomArxiu = etNomArxiu.text.toString() + extensioArxiu
-                    escrit = Txt_IO.TextFileHandler().writeText(text, nomArxiu)
+                    escrit = Txt_IO.TextFileHandler().writeText(text, nomArxiu, visualitzarEditar)
                 } else {
                     Toast.makeText(this, "El nom de l'arxiu no pot estar en blanc", Toast.LENGTH_SHORT).show()
                 }
@@ -126,9 +146,13 @@ class Text_Activity : AppCompatActivity() {
             }
             if (escrit) {
                 Toast.makeText(this, "Arxiu desat correctament", Toast.LENGTH_SHORT).show()
-                inicialitzarActivity()
+                if (visualitzarEditar) {
+                    finish()
+                } else {
+                    inicialitzarActivity()
+                }
             } else {
-                Toast.makeText(this, "Error en desar l'arxiu", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Error en desar l'arxiu, potser ja existeix i no es pot sobreescriure", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -178,5 +202,33 @@ class Text_Activity : AppCompatActivity() {
         val rbMitjana = findViewById<RadioButton>(R.id.rbMitjana)
         rbNormal.isChecked = true;
         rbMitjana.isChecked = true;
+    }
+    fun establirRadioButtons(estilNormal: Boolean, estilNegreta: Boolean, estilCursiva: Boolean, fontPetita: Boolean, fontMitjana: Boolean, fontGran: Boolean) {
+        if (estilNormal) {
+            rbNormal.isChecked = true
+        } else if (estilNegreta) {
+            rbNegreta.isChecked = true
+        } else if (estilCursiva) {
+            rbCursiva.isChecked = true
+        }
+
+        if (fontPetita) {
+            rbPetita.isChecked = true
+        } else if (fontMitjana) {
+            rbMitjana.isChecked = true
+        } else if (fontGran) {
+            rbGran.isChecked = true
+        }
+    }
+    fun establirBooleans(text: Text) {
+        val estilNormal = text.estil == Txt_IO.TextStyle.NORMAL
+        val estilNegreta = text.estil == Txt_IO.TextStyle.NEGRETA
+        val estilCursiva = text.estil == Txt_IO.TextStyle.CURSIVA
+
+        val fontPetita = text.mida == Txt_IO.TextSize.PETITA
+        val fontMitjana = text.mida == Txt_IO.TextSize.MITJANA
+        val fontGran = text.mida == Txt_IO.TextSize.GRAN
+
+        establirRadioButtons(estilNormal, estilNegreta, estilCursiva, fontPetita, fontMitjana, fontGran)
     }
 }

@@ -18,22 +18,26 @@ object Txt_IO {
 
     class TextFileHandler {
         // Funció per escriure un objecte Text en un fitxer individual
-        fun writeText(text: Text, fileName: String): Boolean {
-            var escrit: Boolean = false
+        fun writeText(text: Text, fileName: String, fitxerEditable: Boolean): Boolean {
+            var escrit = false
             try {
                 val filePath = File(Permanent.textDir, fileName).absolutePath
                 val file = File(filePath)
-                if (!file.exists())
-                {
+                if (!file.exists()) {
                     file.bufferedWriter().use { out ->
                         out.write("${text.text};${text.estil};${text.mida}\n")
                     }
                     escrit = true
+                } else if (fitxerEditable) {
+                    file.bufferedWriter().use { out ->
+                        out.write("${text.text};${text.estil};${text.mida}\n")
+                        escrit = true
+                    }
                 } else {
                     escrit = false
                 }
-
             } catch (e: Exception) {
+                escrit = false
             }
             return escrit
         }
@@ -42,28 +46,29 @@ object Txt_IO {
         fun readText(fileName: String): Text? {
             val filePath = File(Permanent.textDir, fileName).absolutePath
             val file = File(filePath)
-            if (!file.exists()) return null
+            var textObject: Text? = null
 
-            val line = file.readText()
-            val parts = line.split(";")
-            return if (parts.size == 3) {
-                val text = parts[0]
-                val style = when (parts[1]) {
-                    "NORMAL" -> TextStyle.NORMAL
-                    "NEGRETA" -> TextStyle.NEGRETA
-                    "CURSIVA" -> TextStyle.CURSIVA
-                    else -> TextStyle.NORMAL
+            if (file.exists()) {
+                val line = file.readText()
+                val parts = line.split(";")
+                if (parts.size == 3) {
+                    val text = parts[0]
+                    val style = when (parts[1]) {
+                        "NORMAL" -> TextStyle.NORMAL
+                        "NEGRETA" -> TextStyle.NEGRETA
+                        "CURSIVA" -> TextStyle.CURSIVA
+                        else -> TextStyle.NORMAL
+                    }
+                    val size = when (parts[2]) {
+                        "PETITA" -> TextSize.PETITA
+                        "NORMAL" -> TextSize.MITJANA
+                        "GRAN" -> TextSize.GRAN
+                        else -> TextSize.MITJANA
+                    }
+                    textObject = Text(text, style, size)
                 }
-                val size = when (parts[2]) {
-                    "PETITA" -> TextSize.PETITA
-                    "NORMAL" -> TextSize.MITJANA
-                    "GRAN" -> TextSize.GRAN
-                    else -> TextSize.MITJANA
-                }
-                Text(text, style, size)
-            } else {
-                null
             }
+            return textObject
         }
     }
 
@@ -82,7 +87,7 @@ object Txt_IO {
         val fileNames = listOf("textfile1.txt", "textfile2.txt", "textfile3.txt")
 
         textsToWrite.forEachIndexed { index, text ->
-            textHandler.writeText(text, fileNames[index])
+            textHandler.writeText(text, fileNames[index], true)
         }
 
         // Llegeix els fitxers i imprimeix el seu contingut
@@ -94,3 +99,9 @@ object Txt_IO {
         }
     }
 }
+
+class Text(
+    var text: String,
+    var estil: Txt_IO.TextStyle,
+    var mida: Txt_IO.TextSize
+)
