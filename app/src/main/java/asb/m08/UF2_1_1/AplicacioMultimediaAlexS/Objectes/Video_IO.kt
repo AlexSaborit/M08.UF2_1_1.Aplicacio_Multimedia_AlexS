@@ -14,6 +14,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -55,7 +56,11 @@ object Video_IO {
                 try {
                     val videoFile: File? = createVideoFile(activity)
                     videoFile?.also {
-                        videoURI = Uri.fromFile(videoFile)
+                        videoURI = FileProvider.getUriForFile(
+                            activity,
+                            "com.example.myapp.fileprovider",
+                            it
+                        )
                         recordVideoIntent.putExtra(MediaStore.EXTRA_OUTPUT, videoURI)
                         activity.startActivityForResult(recordVideoIntent, REQUEST_VIDEO_CAPTURE)
                     }

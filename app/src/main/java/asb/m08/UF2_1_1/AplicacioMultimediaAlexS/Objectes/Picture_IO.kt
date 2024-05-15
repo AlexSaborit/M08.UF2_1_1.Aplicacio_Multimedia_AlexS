@@ -27,12 +27,14 @@ object Picture_IO {
     private var photoURI: Uri? = null
 
     fun startImageCaptureProcess(activity: Activity) {
-        val permissionsNeeded = checkAndRequestPermissions(activity)
-        if (permissionsNeeded.isEmpty()) {
-            dispatchTakePictureIntent(activity)
-        } else {
-            ActivityCompat.requestPermissions(activity, permissionsNeeded.toTypedArray(), REQUEST_PERMISSIONS)
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            val permissionsNeeded = checkAndRequestPermissions(activity)
+            if (permissionsNeeded.isNotEmpty()) {
+                ActivityCompat.requestPermissions(activity, permissionsNeeded.toTypedArray(), REQUEST_PERMISSIONS)
+                return
+            }
         }
+        dispatchTakePictureIntent(activity)
     }
 
     private fun checkAndRequestPermissions(activity: Activity): List<String> {

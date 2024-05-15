@@ -70,9 +70,8 @@ object Audio_IO {
     private fun createAudioFile(context: Context): File {
         val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
         val audioFileName = "AUDIO_${timeStamp}_"
-        //val storageDir: File? = context.getExternalFilesDir(Environment.DIRECTORY_MUSIC)
         val storageDir: File? = Permanent.audioDir
-            return File.createTempFile(audioFileName, ".mp3", storageDir)
+        return File.createTempFile(audioFileName, ".mp3", storageDir)
     }
 
     fun handleActivityResult(activity: Activity, requestCode: Int, resultCode: Int, data: Intent?) {

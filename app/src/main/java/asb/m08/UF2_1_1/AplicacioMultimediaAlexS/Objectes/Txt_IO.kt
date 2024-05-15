@@ -1,7 +1,24 @@
 package asb.m08.UF2_1_1.AplicacioMultimediaAlexS.Objectes
 
+import android.Manifest
+import android.app.Activity
+import android.content.Context
+import android.content.DialogInterface
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
+import android.os.Environment
+import android.provider.MediaStore
+import android.widget.EditText
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import asb.m08.UF2_1_1.AplicacioMultimediaAlexS.Classes.Text
 import java.io.File
+import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.*
 
 object Txt_IO {
     enum class TextStyle {
@@ -16,7 +33,7 @@ object Txt_IO {
         GRAN
     }
 
-    class TextFileHandler {
+    object TextFileHandler {
         // Funció per escriure un objecte Text en un fitxer individual
         fun writeText(text: Text, fileName: String, fitxerEditable: Boolean): Boolean {
             var escrit = false
@@ -61,7 +78,7 @@ object Txt_IO {
                     }
                     val size = when (parts[2]) {
                         "PETITA" -> TextSize.PETITA
-                        "NORMAL" -> TextSize.MITJANA
+                        "MITJANA" -> TextSize.MITJANA
                         "GRAN" -> TextSize.GRAN
                         else -> TextSize.MITJANA
                     }
@@ -74,7 +91,7 @@ object Txt_IO {
 
     // Funció que crea fitxers de text individuals
     fun test() {
-        val textHandler = TextFileHandler()
+        val textHandler = TextFileHandler
 
         // Escriu alguns objectes Text en fitxers individuals
         val textsToWrite = listOf(
@@ -99,9 +116,3 @@ object Txt_IO {
         }
     }
 }
-
-class Text(
-    var text: String,
-    var estil: Txt_IO.TextStyle,
-    var mida: Txt_IO.TextSize
-)

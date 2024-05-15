@@ -64,7 +64,7 @@ class Text_Activity : AppCompatActivity() {
         val arxiuSeleccionat = intent.getStringExtra("ARXIU_SELECCIONAT")
         if (arxiuSeleccionat != null) {
             visualitzarEditar = true
-            val textObjectRebut = Txt_IO.TextFileHandler().readText(arxiuSeleccionat)
+            val textObjectRebut = Txt_IO.TextFileHandler.readText(arxiuSeleccionat)
 
             //val arxiu = File(rutaFitxerTextRebut)
             //val nomArxiu = File(rutaFitxerTextRebut).name
@@ -137,7 +137,7 @@ class Text_Activity : AppCompatActivity() {
 
                     val text = Text(etText.text.toString(),estil, mida)
                     val nomArxiu = etNomArxiu.text.toString() + extensioArxiu
-                    escrit = Txt_IO.TextFileHandler().writeText(text, nomArxiu, visualitzarEditar)
+                    escrit = Txt_IO.TextFileHandler.writeText(text, nomArxiu, visualitzarEditar)
                 } else {
                     Toast.makeText(this, "El nom de l'arxiu no pot estar en blanc", Toast.LENGTH_SHORT).show()
                 }
@@ -220,14 +220,14 @@ class Text_Activity : AppCompatActivity() {
             rbGran.isChecked = true
         }
     }
-    fun establirBooleans(text: Text) {
-        val estilNormal = text.estil == Txt_IO.TextStyle.NORMAL
-        val estilNegreta = text.estil == Txt_IO.TextStyle.NEGRETA
-        val estilCursiva = text.estil == Txt_IO.TextStyle.CURSIVA
+    fun establirBooleans(text: Text?) {
+        val estilNormal = text?.estil == Txt_IO.TextStyle.NORMAL
+        val estilNegreta = text?.estil == Txt_IO.TextStyle.NEGRETA
+        val estilCursiva = text?.estil == Txt_IO.TextStyle.CURSIVA
 
-        val fontPetita = text.mida == Txt_IO.TextSize.PETITA
-        val fontMitjana = text.mida == Txt_IO.TextSize.MITJANA
-        val fontGran = text.mida == Txt_IO.TextSize.GRAN
+        val fontPetita = text?.mida == Txt_IO.TextSize.PETITA
+        val fontMitjana = text?.mida == Txt_IO.TextSize.MITJANA
+        val fontGran = text?.mida == Txt_IO.TextSize.GRAN
 
         establirRadioButtons(estilNormal, estilNegreta, estilCursiva, fontPetita, fontMitjana, fontGran)
     }
