@@ -15,62 +15,82 @@ object Txt_IO {
         MITJANA,
         GRAN
     }
-    //data class Line(val text: String, val style: TextStyle, val size: TextSize)
 
-    class TextFileHandler(val fileName: String) {
-        // Funció per llegir l'arxiu de text
-        public fun readLines(): MutableList<Text> {
-            val textos = mutableListOf<Text>()
-            File(fileName).forEachLine { line ->
-                val parts = line.split(";")
-                if (parts.size == 3) {
-                    val text = parts[0]
-                    val style = when (parts[1]) {
-                        "NORMAL" -> TextStyle.NORMAL
-                        "NEGRETA" -> TextStyle.NEGRETA
-                        "CURSIVA" -> TextStyle.CURSIVA
-                        else -> TextStyle.NORMAL
+    class TextFileHandler {
+        // Funció per escriure un objecte Text en un fitxer individual
+        fun writeText(text: Text, fileName: String): Boolean {
+            var escrit: Boolean = false
+            try {
+                val filePath = File(Permanent.textDir, fileName).absolutePath
+                val file = File(filePath)
+                if (!file.exists())
+                {
+                    file.bufferedWriter().use { out ->
+                        out.write("${text.text};${text.estil};${text.mida}\n")
                     }
-                    val size = when (parts[2]) {
-                        "PETITA" -> TextSize.PETITA
-                        "NORMAL" -> TextSize.MITJANA
-                        "GRAN" -> TextSize.GRAN
-                        else -> TextSize.MITJANA
-                    }
-                    textos.add(Text(text, style, size))
+                    escrit = true
+                } else {
+                    escrit = false
                 }
+
+            } catch (e: Exception) {
             }
-            return textos
+            return escrit
         }
 
-        // Funció per escriure a l'arxiu de text
-        fun writeLines(lines: MutableList<Text>) {
-            val file = File(fileName)
-            file.bufferedWriter().use { out ->
-                lines.forEach { line ->
-                    out.write("${line.text};${line.estil};${line.mida}\n")
+        // Funció per llegir un fitxer de text i convertir-lo en un objecte Text
+        fun readText(fileName: String): Text? {
+            val filePath = File(Permanent.textDir, fileName).absolutePath
+            val file = File(filePath)
+            if (!file.exists()) return null
+
+            val line = file.readText()
+            val parts = line.split(";")
+            return if (parts.size == 3) {
+                val text = parts[0]
+                val style = when (parts[1]) {
+                    "NORMAL" -> TextStyle.NORMAL
+                    "NEGRETA" -> TextStyle.NEGRETA
+                    "CURSIVA" -> TextStyle.CURSIVA
+                    else -> TextStyle.NORMAL
                 }
+                val size = when (parts[2]) {
+                    "PETITA" -> TextSize.PETITA
+                    "NORMAL" -> TextSize.MITJANA
+                    "GRAN" -> TextSize.GRAN
+                    else -> TextSize.MITJANA
+                }
+                Text(text, style, size)
+            } else {
+                null
             }
         }
     }
 
-    //funció que crea un arxiu de text
+    // Funció que crea fitxers de text individuals
     fun test() {
-        val fileName = "textfile.txt"
-        val textHandler = TextFileHandler(fileName)
+        val textHandler = TextFileHandler()
 
-        // Escriu algunes línies a l'arxiu
-        val linesToWrite = mutableListOf(
+        // Escriu alguns objectes Text en fitxers individuals
+        val textsToWrite = listOf(
             Text("Text normal", TextStyle.NORMAL, TextSize.MITJANA),
             Text("Text en negreta petit", TextStyle.NEGRETA, TextSize.PETITA),
             Text("Text en cursiva gran", TextStyle.CURSIVA, TextSize.GRAN)
         )
-        textHandler.writeLines(linesToWrite)
 
-        // Llegeix les línies de l'arxiu i les imprimeix
-        val linesRead = textHandler.readLines()
-        linesRead.forEach { line ->
-            println("${line.text} (${line.estil}, ${line.mida})")
+        // Especifica el nom del fitxer per cada objecte Text
+        val fileNames = listOf("textfile1.txt", "textfile2.txt", "textfile3.txt")
+
+        textsToWrite.forEachIndexed { index, text ->
+            textHandler.writeText(text, fileNames[index])
+        }
+
+        // Llegeix els fitxers i imprimeix el seu contingut
+        fileNames.forEach { fileName ->
+            val textRead = textHandler.readText(fileName)
+            textRead?.let {
+                println("${it.text} (${it.estil}, ${it.mida})")
+            }
         }
     }
 }

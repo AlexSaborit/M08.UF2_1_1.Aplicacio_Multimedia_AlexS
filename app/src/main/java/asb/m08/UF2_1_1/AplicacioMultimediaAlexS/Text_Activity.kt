@@ -9,6 +9,7 @@ import android.widget.EditText
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.TextView
+import android.widget.Toast
 import asb.m08.UF2_1_1.AplicacioMultimediaAlexS.Classes.Text
 import asb.m08.UF2_1_1.AplicacioMultimediaAlexS.Objectes.Permanent
 import asb.m08.UF2_1_1.AplicacioMultimediaAlexS.Objectes.Txt_IO
@@ -21,6 +22,8 @@ class Text_Activity : AppCompatActivity() {
     var fontPetita: Boolean = false
     var fontMitjana: Boolean = false
     var fontGran: Boolean = false
+
+    val extensioArxiu = ".txt"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -81,52 +84,69 @@ class Text_Activity : AppCompatActivity() {
             previsualitzar()
         }
         btnDesarArxiu.setOnClickListener {
-            var mida = Txt_IO.TextSize.MITJANA
-            if (fontPetita) {
-                mida = Txt_IO.TextSize.PETITA
-            } else if (fontGran) {
-                mida = Txt_IO.TextSize.GRAN
-            }
-
-            var estil = Txt_IO.TextStyle.NORMAL
-            if(estilCursiva) {
-                estil = Txt_IO.TextStyle.CURSIVA
-            } else if (estilNegreta) {
-                estil = Txt_IO.TextStyle.NEGRETA
-            }
+            var escrit = false
             val etText = findViewById<EditText>(R.id.etText)
-            val etNomArxiu = findViewById<EditText>(R.id.etNomArxiu)
-            val text = Text(etText.text.toString(),estil, mida)//TODO (no escullo el nom que ha de tenir l'arxiu)
+            if (!etText.text.isNullOrEmpty()){
+                val etNomArxiu = findViewById<EditText>(R.id.etNomArxiu)
+                if (!etNomArxiu.text.isNullOrEmpty()) {
+                    var mida = Txt_IO.TextSize.MITJANA
+                    if (fontPetita) {
+                        mida = Txt_IO.TextSize.PETITA
+                    } else if (fontGran) {
+                        mida = Txt_IO.TextSize.GRAN
+                    }
 
-            var textosLocal = Txt_IO.TextFileHandler(Permanent.textDir).readLines()
-            textosLocal.add(text)
-            Txt_IO.TextFileHandler(Permanent.textDir).writeLines(textosLocal)
+                    var estil = Txt_IO.TextStyle.NORMAL
+                    if(estilCursiva) {
+                        estil = Txt_IO.TextStyle.CURSIVA
+                    } else if (estilNegreta) {
+                        estil = Txt_IO.TextStyle.NEGRETA
+                    }
+
+                    val text = Text(etText.text.toString(),estil, mida)
+                    val nomArxiu = etNomArxiu.text.toString() + extensioArxiu
+                    escrit = Txt_IO.TextFileHandler().writeText(text, nomArxiu)
+                } else {
+                    Toast.makeText(this, "El nom de l'arxiu no pot estar en blanc", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                Toast.makeText(this, "El text no pot estar en blanc", Toast.LENGTH_SHORT).show()
+            }
+            if (escrit) {
+                Toast.makeText(this, "Arxiu desat correctament", Toast.LENGTH_SHORT).show()
+                inicialitzarActivity()
+            } else {
+                Toast.makeText(this, "Error en desar l'arxiu", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
     private fun previsualitzar() {
-
         val etText = findViewById<EditText>(R.id.etText)
-        val tvPrevisualitzar = findViewById<TextView>(R.id.tvPrevisualitzar)
+        if (!etText.text.isNullOrEmpty()){
+            val tvPrevisualitzar = findViewById<TextView>(R.id.tvPrevisualitzar)
 
-        tvPrevisualitzar.text = etText.text
-        if (fontPetita) {
-            tvPrevisualitzar.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10f)
-        }
-        if (fontMitjana) {
-            tvPrevisualitzar.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15f)
-        }
-        if (fontGran) {
-            tvPrevisualitzar.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20f)
-        }
-        if (estilNormal) {
-            tvPrevisualitzar.setTypeface(null, Typeface.NORMAL)
-        }
-        if (estilCursiva) {
-            tvPrevisualitzar.setTypeface(null, Typeface.ITALIC)
-        }
-        if (estilNegreta) {
-            tvPrevisualitzar.setTypeface(null, Typeface.BOLD)
+            tvPrevisualitzar.text = etText.text
+            if (fontPetita) {
+                tvPrevisualitzar.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10f)
+            }
+            if (fontMitjana) {
+                tvPrevisualitzar.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15f)
+            }
+            if (fontGran) {
+                tvPrevisualitzar.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20f)
+            }
+            if (estilNormal) {
+                tvPrevisualitzar.setTypeface(null, Typeface.NORMAL)
+            }
+            if (estilCursiva) {
+                tvPrevisualitzar.setTypeface(null, Typeface.ITALIC)
+            }
+            if (estilNegreta) {
+                tvPrevisualitzar.setTypeface(null, Typeface.BOLD)
+            }
+        } else {
+            Toast.makeText(this, "El text no pot estar en blanc", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -138,6 +158,13 @@ class Text_Activity : AppCompatActivity() {
         var fontPetita = false
         var fontNormal = false
         var fontGran = false
+
+        val etText = findViewById<EditText>(R.id.etText)
+        etText.setText("")
+        val etNomArxiu = findViewById<EditText>(R.id.etNomArxiu)
+        etNomArxiu.setText("")
+        val tvPrevisualitzar = findViewById<TextView>(R.id.tvPrevisualitzar)
+        tvPrevisualitzar.setText("")
     }
 
     private fun inicialitzarActivity() {

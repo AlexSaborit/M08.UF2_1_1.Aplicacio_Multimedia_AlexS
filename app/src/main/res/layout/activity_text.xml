@@ -120,13 +120,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="1mm"
-                android:text="Escriu el nom de l'arxiu on desar el text:" />
+                android:text="Escriu el nom de l'arxiu on desar el text sense extensió:" />
 
             <EditText
                 android:id="@+id/etNomArxiu"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="nomArxiu.txt"
+                android:hint="nomArxiu"
                 android:padding="1mm" />
 
             <Button
