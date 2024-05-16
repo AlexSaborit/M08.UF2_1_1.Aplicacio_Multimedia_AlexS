@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import android.widget.Button
 import android.widget.EditText
@@ -26,7 +27,7 @@ import java.util.Locale
 class MainActivity : AppCompatActivity() {
 
     companion object {
-        val REQUEST_CODE_CERCAR_ARXIU = 101 //TODO(revisar si ha de ser un altre número per evitar repetir el valor 1)
+        val REQUEST_CODE_CERCAR_ARXIU = 101
         val REQUEST_IMAGE_CAPTURE = 1
         val REQUEST_AUDIO_CAPTURE = 2
         val REQUEST_VIDEO_CAPTURE = 3
@@ -51,9 +52,9 @@ class MainActivity : AppCompatActivity() {
 
         val permisos = Permisos()
         Permanent.llistatPermisos = permisos.checkAndRequestPermissions(this)
-        permisos.requestPermissions(this, Permanent.llistatPermisos, REQUEST_PERMISSIONS_image) // permís per foto
-        permisos.requestPermissions(this, Permanent.llistatPermisos, REQUEST_PERMISSIONS_audio) // permís per audio
-        permisos.requestPermissions(this, Permanent.llistatPermisos, REQUEST_PERMISSIONS_video) // permís per vídeo
+        permisos.requestPermissions(this, Permanent.llistatPermisos, REQUEST_PERMISSIONS_image)
+        permisos.requestPermissions(this, Permanent.llistatPermisos, REQUEST_PERMISSIONS_audio)
+        permisos.requestPermissions(this, Permanent.llistatPermisos, REQUEST_PERMISSIONS_video)
 
         btnCrearTxt.setOnClickListener {
             val intent = Intent(this, Text_Activity::class.java)
@@ -138,6 +139,7 @@ class MainActivity : AppCompatActivity() {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
             showImageNameDialog(activity)
         } else if (requestCode == REQUEST_AUDIO_CAPTURE && resultCode == Activity.RESULT_OK) {
+            audioURI = data?.data
             showAudioNameDialog(activity)
         } else if (requestCode == REQUEST_VIDEO_CAPTURE && resultCode == Activity.RESULT_OK) {
             showVideoNameDialog(activity)
@@ -212,7 +214,7 @@ class MainActivity : AppCompatActivity() {
     private fun saveAudioWithName(activity: Activity, audioUri: Uri, audioName: String) {
         val inputStream: InputStream? = activity.contentResolver.openInputStream(audioUri)
         //val outputDir: File = activity.getExternalFilesDir(Environment.DIRECTORY_MUSIC) ?: return
-        val outputDir: File = Permanent.audioDir ?: return
+        val outputDir: File = Permanent.audioDir
         val outputFile = File(outputDir, audioName)
 
         inputStream?.use { input ->
