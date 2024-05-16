@@ -6,17 +6,19 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import asb.m08.UF2_1_1.AplicacioMultimediaAlexS.Classes.Permisos
 import asb.m08.UF2_1_1.AplicacioMultimediaAlexS.Objectes.Permanent
 import java.io.File
+import java.io.FileOutputStream
 import java.io.IOException
+import java.io.InputStream
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -49,10 +51,9 @@ class MainActivity : AppCompatActivity() {
 
         val permisos = Permisos()
         Permanent.llistatPermisos = permisos.checkAndRequestPermissions(this)
-        permisos.requestPermissions(this, Permanent.llistatPermisos, REQUEST_PERMISSIONS_image)//permís per foto
-        permisos.requestPermissions(this, Permanent.llistatPermisos, REQUEST_PERMISSIONS_audio)//permís per audio
-        permisos.requestPermissions(this, Permanent.llistatPermisos, REQUEST_PERMISSIONS_video)//permís per vídeo
-        //permisos.requestPermissions(this, Permanent.llistatPermisos, 10)//permís per llegir/escriure
+        permisos.requestPermissions(this, Permanent.llistatPermisos, REQUEST_PERMISSIONS_image) // permís per foto
+        permisos.requestPermissions(this, Permanent.llistatPermisos, REQUEST_PERMISSIONS_audio) // permís per audio
+        permisos.requestPermissions(this, Permanent.llistatPermisos, REQUEST_PERMISSIONS_video) // permís per vídeo
 
         btnCrearTxt.setOnClickListener {
             val intent = Intent(this, Text_Activity::class.java)
@@ -60,14 +61,11 @@ class MainActivity : AppCompatActivity() {
         }
         btnCapturarFoto.setOnClickListener {
             dispatchTakePictureIntent()
-            //Picture_IO.startImageCaptureProcess(this)
         }
         btnCapturarVideo.setOnClickListener {
             dispatchTakeVideoIntent()
-            //Video_IO.startVideoCaptureProcess(this)
         }
         btnCapturarSo.setOnClickListener {
-            //Audio_IO.startAudioCaptureProcess(this)
             dispatchRecordAudioIntent(this)
         }
         btnVisualitzarReproduir.setOnClickListener {
@@ -87,21 +85,18 @@ class MainActivity : AppCompatActivity() {
             handlePermissionsResult(
                 grantResults,
                 "Permissions Denied for Picture",
-                //{ Picture_IO.dispatchTakePictureIntent(this) }
                 { dispatchTakePictureIntent() }
             )
         } else if (requestCode == REQUEST_PERMISSIONS_audio) {
             handlePermissionsResult(
                 grantResults,
                 "Permissions Denied for Audio",
-                //{ Audio_IO.dispatchRecordAudioIntent(this) }
                 { dispatchRecordAudioIntent(this) }
             )
         } else if (requestCode == REQUEST_PERMISSIONS_video) {
             handlePermissionsResult(
                 grantResults,
                 "Permissions Denied for Video",
-                //{ Video_IO.dispatchRecordVideoIntent(this) }
                 { dispatchTakeVideoIntent() }
             )
         }
@@ -138,6 +133,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
     fun handleActivityResult(activity: Activity, requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
             showImageNameDialog(activity)
@@ -146,9 +142,10 @@ class MainActivity : AppCompatActivity() {
         } else if (requestCode == REQUEST_VIDEO_CAPTURE && resultCode == Activity.RESULT_OK) {
             showVideoNameDialog(activity)
         } else if (resultCode == Activity.RESULT_CANCELED) {
-            Toast.makeText(activity, "capture cancelled", Toast.LENGTH_SHORT).show()
+            Toast.makeText(activity, "Capture cancelled", Toast.LENGTH_SHORT).show()
         }
     }
+
     private fun showImageNameDialog(activity: Activity) {
         val builder = AlertDialog.Builder(activity)
         builder.setTitle("Enter image name")
@@ -182,7 +179,7 @@ class MainActivity : AppCompatActivity() {
             if (!audioName.endsWith(".mp3")) {
                 audioName += ".mp3"
             }
-            saveAudioWithName(activity, audioName)
+            saveAudioWithName(activity, audioURI!!, audioName)
         }
         builder.setNegativeButton("Cancel") { dialog, _ ->
             dialog.cancel()
@@ -190,6 +187,7 @@ class MainActivity : AppCompatActivity() {
 
         builder.show()
     }
+
     private fun showVideoNameDialog(activity: Activity) {
         val builder = AlertDialog.Builder(activity)
         builder.setTitle("Enter video name")
@@ -211,9 +209,19 @@ class MainActivity : AppCompatActivity() {
         builder.show()
     }
 
-    private fun saveAudioWithName(activity: Activity, audioName: String) {
-        // Implementa la lògica per guardar l'àudio amb el nom especificat
-        Toast.makeText(activity, "Audio saved as: $audioName", Toast.LENGTH_SHORT).show()
+    private fun saveAudioWithName(activity: Activity, audioUri: Uri, audioName: String) {
+        val inputStream: InputStream? = activity.contentResolver.openInputStream(audioUri)
+        //val outputDir: File = activity.getExternalFilesDir(Environment.DIRECTORY_MUSIC) ?: return
+        val outputDir: File = Permanent.audioDir ?: return
+        val outputFile = File(outputDir, audioName)
+
+        inputStream?.use { input ->
+            FileOutputStream(outputFile).use { output ->
+                input.copyTo(output)
+            }
+        }
+
+        Toast.makeText(activity, "Audio saved as: ${outputFile.absolutePath}", Toast.LENGTH_LONG).show()
     }
 
     private fun saveVideoWithName(activity: Activity, videoName: String) {
@@ -225,31 +233,27 @@ class MainActivity : AppCompatActivity() {
         // Implementa la lògica per guardar la imatge amb el nom especificat
         Toast.makeText(activity, "Image saved as: $imageName", Toast.LENGTH_SHORT).show()
     }
+
     fun dispatchTakePictureIntent() {
-        // No es crida directament Picture_IO, sinó que es fa servir l'intent directament aquí
         val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         try {
             startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
         } catch (e: ActivityNotFoundException) {
-            Toast.makeText(this, "error foto cam intent", Toast.LENGTH_SHORT).show()
-            // display error state to the user
+            Toast.makeText(this, "Error foto cam intent", Toast.LENGTH_SHORT).show()
         }
     }
 
     fun dispatchTakeVideoIntent() {
-        // No es crida directament Video_IO, sinó que es fa servir l'intent directament aquí
         Intent(MediaStore.ACTION_VIDEO_CAPTURE).also { takeVideoIntent ->
             takeVideoIntent.resolveActivity(packageManager)?.also {
                 startActivityForResult(takeVideoIntent, REQUEST_VIDEO_CAPTURE)
             } ?: run {
-                Toast.makeText(this, "error video cam intent", Toast.LENGTH_SHORT).show()
-                //display error state to the user
+                Toast.makeText(this, "Error video cam intent", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
     fun dispatchRecordAudioIntent(activity: Activity) {
-        // Es crida la funció de creació de fitxer d'àudio dins d'aquesta classe
         Intent(MediaStore.Audio.Media.RECORD_SOUND_ACTION).also { recordSoundIntent ->
             recordSoundIntent.resolveActivity(activity.packageManager)?.also {
                 try {
@@ -266,13 +270,12 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    @Throws(IOException::class)
     fun createAudioFile(context: Context): File {
-        // S'utilitza la carpeta d'àudio emmagatzemada a Permanent.kt
         val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
         val audioFileName = "AUDIO_${timeStamp}_"
+        //val storageDir: File? = context.getExternalFilesDir(Environment.DIRECTORY_MUSIC)
         val storageDir: File? = Permanent.audioDir
-        return File.createTempFile(audioFileName, ".mp3", storageDir)
+        return File.createTempFile(audioFileName, ".3gp", storageDir)
     }
 }
-
-
