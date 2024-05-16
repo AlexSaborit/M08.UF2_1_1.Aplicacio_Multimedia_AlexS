@@ -115,7 +115,7 @@ class MainActivity : AppCompatActivity() {
 
         when (requestCode) {
             REQUEST_IMAGE_CAPTURE -> handleActivityResult(this, requestCode, resultCode, data)
-            REQUEST_AUDIO_CAPTURE -> handleActivityResult(this, requestCode, resultCode, data)
+            REQUEST_AUDIO_CAPTURE -> Audio_IO.handleActivityResult(this, requestCode, resultCode, data)
             REQUEST_VIDEO_CAPTURE -> handleActivityResult(this, requestCode, resultCode, data)
             REQUEST_CODE_CERCAR_ARXIU -> if (resultCode == RESULT_OK) {
                 val arxiuSeleccionat = data?.getStringExtra("ARXIU_SELECCIONAT")
@@ -182,11 +182,6 @@ class MainActivity : AppCompatActivity() {
         builder.show()
     }
 
-    private fun saveImageWithName(activity: Activity, imageName: String) {
-        // Implementa la lògica per guardar la imatge amb el nom especificat
-        Toast.makeText(activity, "Image saved as: $imageName", Toast.LENGTH_SHORT).show()
-    }
-
     private fun showAudioNameDialog(activity: Activity) {
         val builder = AlertDialog.Builder(activity)
         builder.setTitle("Enter audio name")
@@ -207,12 +202,6 @@ class MainActivity : AppCompatActivity() {
 
         builder.show()
     }
-
-    private fun saveAudioWithName(activity: Activity, audioName: String) {
-        // Implementa la lògica per guardar l'àudio amb el nom especificat
-        Toast.makeText(activity, "Audio saved as: $audioName", Toast.LENGTH_SHORT).show()
-    }
-
     private fun showVideoNameDialog(activity: Activity) {
         val builder = AlertDialog.Builder(activity)
         builder.setTitle("Enter video name")
@@ -234,8 +223,18 @@ class MainActivity : AppCompatActivity() {
         builder.show()
     }
 
+    private fun saveAudioWithName(activity: Activity, audioName: String) {
+        // Implementa la lògica per guardar l'àudio amb el nom especificat
+        Toast.makeText(activity, "Audio saved as: $audioName", Toast.LENGTH_SHORT).show()
+    }
+
     private fun saveVideoWithName(activity: Activity, videoName: String) {
         // Implementa la lògica per guardar el vídeo amb el nom especificat
         Toast.makeText(activity, "Video saved as: $videoName", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun saveImageWithName(activity: Activity, imageName: String) {
+        // Implementa la lògica per guardar la imatge amb el nom especificat
+        Toast.makeText(activity, "Image saved as: $imageName", Toast.LENGTH_SHORT).show()
     }
 }

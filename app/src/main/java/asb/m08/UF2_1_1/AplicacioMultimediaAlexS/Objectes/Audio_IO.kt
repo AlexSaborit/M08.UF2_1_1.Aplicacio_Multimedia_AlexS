@@ -3,6 +3,7 @@ package asb.m08.UF2_1_1.AplicacioMultimediaAlexS.Objectes
 import android.Manifest
 import android.app.Activity
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -13,7 +14,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.content.FileProvider
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -26,14 +26,12 @@ object Audio_IO {
     private var audioURI: Uri? = null
 
     fun startAudioCaptureProcess(activity: Activity) {
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-            val permissionsNeeded = checkAndRequestPermissions(activity)
-            if (permissionsNeeded.isNotEmpty()) {
-                ActivityCompat.requestPermissions(activity, permissionsNeeded.toTypedArray(), REQUEST_PERMISSIONS)
-                return
-            }
+        val permissionsNeeded = checkAndRequestPermissions(activity)
+        if (permissionsNeeded.isEmpty()) {
+            dispatchRecordAudioIntent(activity)
+        } else {
+            ActivityCompat.requestPermissions(activity, permissionsNeeded.toTypedArray(), REQUEST_PERMISSIONS)
         }
-        dispatchRecordAudioIntent(activity)
     }
 
     private fun checkAndRequestPermissions(activity: Activity): List<String> {
@@ -57,15 +55,7 @@ object Audio_IO {
                 try {
                     val audioFile: File? = createAudioFile(activity)
                     audioFile?.also {
-                        audioURI = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
-                            Uri.fromFile(it)
-                        } else {
-                            FileProvider.getUriForFile(
-                                activity,
-                                "com.example.myapp.fileprovider",
-                                it
-                            )
-                        }
+                        audioURI = Uri.fromFile(audioFile)
                         recordSoundIntent.putExtra(MediaStore.EXTRA_OUTPUT, audioURI)
                         activity.startActivityForResult(recordSoundIntent, REQUEST_AUDIO_CAPTURE)
                     }
@@ -80,7 +70,7 @@ object Audio_IO {
     private fun createAudioFile(context: Context): File {
         val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
         val audioFileName = "AUDIO_${timeStamp}_"
-        val storageDir: File? = Permanent.audioDir
+        val storageDir: File? = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC)
         return File.createTempFile(audioFileName, ".mp3", storageDir)
     }
 
