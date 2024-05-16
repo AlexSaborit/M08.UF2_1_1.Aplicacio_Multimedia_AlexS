@@ -3,7 +3,6 @@ package asb.m08.UF2_1_1.AplicacioMultimediaAlexS.Objectes
 import android.Manifest
 import android.app.Activity
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -27,12 +26,14 @@ object Video_IO {
     private var videoURI: Uri? = null
 
     fun startVideoCaptureProcess(activity: Activity) {
-        val permissionsNeeded = checkAndRequestPermissions(activity)
-        if (permissionsNeeded.isEmpty()) {
-            dispatchRecordVideoIntent(activity)
-        } else {
-            ActivityCompat.requestPermissions(activity, permissionsNeeded.toTypedArray(), REQUEST_PERMISSIONS)
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            val permissionsNeeded = checkAndRequestPermissions(activity)
+            if (permissionsNeeded.isNotEmpty()) {
+                ActivityCompat.requestPermissions(activity, permissionsNeeded.toTypedArray(), REQUEST_PERMISSIONS)
+                return
+            }
         }
+        dispatchRecordVideoIntent(activity)
     }
 
     private fun checkAndRequestPermissions(activity: Activity): List<String> {
@@ -56,11 +57,15 @@ object Video_IO {
                 try {
                     val videoFile: File? = createVideoFile(activity)
                     videoFile?.also {
-                        videoURI = FileProvider.getUriForFile(
-                            activity,
-                            "com.example.myapp.fileprovider",
-                            it
-                        )
+                        videoURI = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+                            Uri.fromFile(it)
+                        } else {
+                            FileProvider.getUriForFile(
+                                activity,
+                                "com.example.myapp.fileprovider",
+                                it
+                            )
+                        }
                         recordVideoIntent.putExtra(MediaStore.EXTRA_OUTPUT, videoURI)
                         activity.startActivityForResult(recordVideoIntent, REQUEST_VIDEO_CAPTURE)
                     }
@@ -74,8 +79,7 @@ object Video_IO {
     @Throws(IOException::class)
     private fun createVideoFile(context: Context): File {
         val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
-        val videoFileName = "VIDEO_${timeStamp}_"
-        //val storageDir: File? = context.getExternalFilesDir(Environment.DIRECTORY_MOVIES)
+        val videoFileName = "MP4_${timeStamp}_"
         val storageDir: File? = Permanent.videoDir
         return File.createTempFile(videoFileName, ".mp4", storageDir)
     }

@@ -3,7 +3,6 @@ package asb.m08.UF2_1_1.AplicacioMultimediaAlexS.Objectes
 import android.Manifest
 import android.app.Activity
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -15,6 +14,8 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import asb.m08.UF2_1_1.AplicacioMultimediaAlexS.Cam_Activity
+import asb.m08.UF2_1_1.AplicacioMultimediaAlexS.Text_Activity
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -28,7 +29,8 @@ object Picture_IO {
 
     fun startImageCaptureProcess(activity: Activity) {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-            val permissionsNeeded = checkAndRequestPermissions(activity)
+            //val permissionsNeeded = checkAndRequestPermissions(activity)
+            val permissionsNeeded = Permanent.llistatPermisos
             if (permissionsNeeded.isNotEmpty()) {
                 ActivityCompat.requestPermissions(activity, permissionsNeeded.toTypedArray(), REQUEST_PERMISSIONS)
                 return
@@ -38,19 +40,34 @@ object Picture_IO {
     }
 
     private fun checkAndRequestPermissions(activity: Activity): List<String> {
-        val cameraPermission = ContextCompat.checkSelfPermission(activity, Manifest.permission.CAMERA)
-        val writePermission = ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-
         val listPermissionsNeeded = mutableListOf<String>()
-        if (cameraPermission != PackageManager.PERMISSION_GRANTED) {
-            listPermissionsNeeded.add(Manifest.permission.CAMERA)
-        }
-        if (writePermission != PackageManager.PERMISSION_GRANTED) {
-            listPermissionsNeeded.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+
+        // Comprova si la versió d'Android és anterior a 33
+        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.M) {
+            val cameraPermission = ContextCompat.checkSelfPermission(activity, Manifest.permission.CAMERA)
+            val writePermission = ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+
+            if (cameraPermission != PackageManager.PERMISSION_GRANTED) {
+                listPermissionsNeeded.add(Manifest.permission.CAMERA)
+            }
+            if (writePermission != PackageManager.PERMISSION_GRANTED) {
+                listPermissionsNeeded.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            }
+        } else if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU){
+            // Si la versió d'Android és 33 o posterior, només demana el permís de càmera
+            val cameraPermission = ContextCompat.checkSelfPermission(activity, Manifest.permission.CAMERA)
+            if (cameraPermission != PackageManager.PERMISSION_GRANTED) {
+                listPermissionsNeeded.add(Manifest.permission.CAMERA)
+            }
+            val writePermission = ContextCompat.checkSelfPermission(activity, Manifest.permission.READ_MEDIA_IMAGES)
+            if (writePermission != PackageManager.PERMISSION_GRANTED) {
+                listPermissionsNeeded.add(Manifest.permission.READ_MEDIA_IMAGES)
+            }
         }
 
         return listPermissionsNeeded
     }
+
 
     fun dispatchTakePictureIntent(activity: Activity) {
         Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
@@ -58,11 +75,16 @@ object Picture_IO {
                 try {
                     val photoFile: File? = createImageFile(activity)
                     photoFile?.also {
-                        photoURI = FileProvider.getUriForFile(
-                            activity,
-                            "com.example.myapp.fileprovider",
-                            it
-                        )
+                        photoURI = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+                            Uri.fromFile(it)
+                        } else {
+                            FileProvider.getUriForFile(
+                                activity,
+                                //"com.example.myapp.fileprovider",
+                                "asb.m08.UF2_1_1.AplicacioMultimediaAlexSfileprovider",
+                                it
+                            )
+                        }
                         takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
                         activity.startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
                     }
@@ -77,7 +99,6 @@ object Picture_IO {
     private fun createImageFile(context: Context): File {
         val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
         val imageFileName = "JPEG_${timeStamp}_"
-        //val storageDir: File? = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
         val storageDir: File? = Permanent.imgDir
         return File.createTempFile(imageFileName, ".jpg", storageDir)
     }
