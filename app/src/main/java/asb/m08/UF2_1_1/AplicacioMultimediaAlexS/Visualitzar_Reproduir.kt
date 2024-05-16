@@ -8,10 +8,10 @@ import android.widget.MediaController
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 
-class Visualitzar_Reproduir_Editar : AppCompatActivity() {
+class Visualitzar_Reproduir : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_visualitzar_reproduir_editar)
+        setContentView(R.layout.activity_visualitzar_reproduir)
 
         val arxiuSeleccionat = intent.getStringExtra("ARXIU_SELECCIONAT")
         val tipusArxiu = intent.getStringExtra("TIPUS_ARXIU")

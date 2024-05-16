@@ -8,14 +8,11 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Environment
 import android.provider.MediaStore
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.core.app.ActivityCompat
-import androidx.core.content.FileProvider
 import asb.m08.UF2_1_1.AplicacioMultimediaAlexS.Classes.Permisos
 import asb.m08.UF2_1_1.AplicacioMultimediaAlexS.Objectes.Permanent
 import java.io.File
@@ -133,7 +130,7 @@ class MainActivity : AppCompatActivity() {
                 val arxiuSeleccionat = data?.getStringExtra("ARXIU_SELECCIONAT")
                 val tipusArxiu = data?.getStringExtra("TIPUS_ARXIU")
                 if (arxiuSeleccionat != null && tipusArxiu != null) {
-                    val intent = Intent(this, Visualitzar_Reproduir_Editar::class.java)
+                    val intent = Intent(this, Visualitzar_Reproduir::class.java)
                     intent.putExtra("ARXIU_SELECCIONAT", arxiuSeleccionat)
                     intent.putExtra("TIPUS_ARXIU", tipusArxiu)
                     startActivity(intent)
@@ -141,44 +138,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-    /*private fun dispatchTakePictureIntent() {
-        //https://developer.android.com/media/camera/camera-intents
-        val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        try {
-            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
-        } catch (e: ActivityNotFoundException) {
-            Toast.makeText(this, "error foto cam intent", Toast.LENGTH_SHORT).show()
-            // display error state to the user
-        }
-    }*/
-    /*private fun dispatchTakeVideoIntent() {
-        Intent(MediaStore.ACTION_VIDEO_CAPTURE).also { takeVideoIntent ->
-            takeVideoIntent.resolveActivity(packageManager)?.also {
-                startActivityForResult(takeVideoIntent, REQUEST_VIDEO_CAPTURE)
-            } ?: run {
-                Toast.makeText(this, "error video cam intent", Toast.LENGTH_SHORT).show()
-                //display error state to the user
-            }
-        }
-    }*/
-    /*fun dispatchRecordAudioIntent(activity: Activity) {
-        Intent(MediaStore.Audio.Media.RECORD_SOUND_ACTION).also { recordSoundIntent ->
-            recordSoundIntent.resolveActivity(activity.packageManager)?.also {
-                try {
-                    val audioFile: File? = createAudioFile(activity)
-                    audioFile?.also {
-                        audioURI = Uri.fromFile(audioFile)
-                        recordSoundIntent.putExtra(MediaStore.EXTRA_OUTPUT, audioURI)
-                        activity.startActivityForResult(recordSoundIntent,
-                            REQUEST_AUDIO_CAPTURE
-                        )
-                    }
-                } catch (ex: IOException) {
-                    Toast.makeText(activity, "Error creating audio file", Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
-    }*/
     fun handleActivityResult(activity: Activity, requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
             showImageNameDialog(activity)
@@ -189,14 +148,7 @@ class MainActivity : AppCompatActivity() {
         } else if (resultCode == Activity.RESULT_CANCELED) {
             Toast.makeText(activity, "capture cancelled", Toast.LENGTH_SHORT).show()
         }
-    }/*
-    @Throws(IOException::class)
-    private fun createAudioFile(context: Context): File {
-        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
-        val audioFileName = "AUDIO_${timeStamp}_"
-        val storageDir: File? = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC)
-        return File.createTempFile(audioFileName, ".mp3", storageDir)
-    }*/
+    }
     private fun showImageNameDialog(activity: Activity) {
         val builder = AlertDialog.Builder(activity)
         builder.setTitle("Enter image name")
@@ -321,7 +273,6 @@ class MainActivity : AppCompatActivity() {
         val storageDir: File? = Permanent.audioDir
         return File.createTempFile(audioFileName, ".mp3", storageDir)
     }
-
 }
 
 

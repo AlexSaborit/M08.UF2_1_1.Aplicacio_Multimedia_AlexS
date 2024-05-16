@@ -4,15 +4,16 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.ArrayAdapter
 import android.widget.ListView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import asb.m08.UF2_1_1.AplicacioMultimediaAlexS.Objectes.Permanent
 
-class CercarArxius : AppCompatActivity() {
+class LlistatArxius : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_cercar_arxius)
+        setContentView(R.layout.activity_llistat_arxius)
 
         val listView: ListView = findViewById(R.id.lvArxius)
         val tipusArxiu = intent.getStringExtra("TIPUS_ARXIU")
@@ -21,6 +22,9 @@ class CercarArxius : AppCompatActivity() {
             val arxius = llistarArxius(tipusArxiu)
             val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, arxius)
             listView.adapter = adapter
+            val tvLlistat = findViewById<TextView>(R.id.tvLlistat)
+            var titol = tvLlistat.text.toString() + " (" + tipusArxiu + ")"
+            tvLlistat.setText(titol)
 
             listView.setOnItemClickListener { _, _, position, _ ->
                 val arxiuSeleccionat = arxius[position]
@@ -30,7 +34,7 @@ class CercarArxius : AppCompatActivity() {
                     intent.putExtra("ARXIU_SELECCIONAT", nomArxiuSeleccionat)
                     startActivity(intent)
                 } else {
-                    val intent = Intent()
+                    val intent = Intent(this, Visualitzar_Reproduir::class.java)
                     intent.putExtra("ARXIU_SELECCIONAT", nomArxiuSeleccionat)
                     intent.putExtra("TIPUS_ARXIU", tipusArxiu)
                     startActivity(intent)

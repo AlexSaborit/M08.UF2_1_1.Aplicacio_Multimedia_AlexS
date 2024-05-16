@@ -38,13 +38,10 @@
             android:name=".ServeisOnline"
             android:exported="false" />
         <activity
-            android:name=".CercarArxius"
+            android:name=".LlistatArxius"
             android:exported="false" /> <!-- Activities -->
         <activity
             android:name=".Cam_Activity"
-            android:exported="false" />
-        <activity
-            android:name=".Objectes.Llistat_Arxius"
             android:exported="false" />
         <activity
             android:name=".Video_Activity"
@@ -53,7 +50,7 @@
             android:name=".Text_Activity"
             android:exported="false" />
         <activity
-            android:name=".Visualitzar_Reproduir_Editar"
+            android:name=".Visualitzar_Reproduir"
             android:exported="false" />
         <activity
             android:name=".MainActivity"

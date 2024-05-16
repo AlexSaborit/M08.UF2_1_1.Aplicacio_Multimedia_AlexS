@@ -16,22 +16,22 @@ class Tria_Arxiu : AppCompatActivity() {
         val ReproduirVideo: Button = findViewById(R.id.ReproduirVideo)
 
         btnVisualitzarEditarText.setOnClickListener{
-            val intent = Intent(this, CercarArxius::class.java)
+            val intent = Intent(this, LlistatArxius::class.java)
             intent.putExtra("TIPUS_ARXIU", "text")
             startActivityForResult(intent, MainActivity.REQUEST_CODE_CERCAR_ARXIU)
         }
         btnMostrarImatge.setOnClickListener{
-            val intent = Intent(this, CercarArxius::class.java)
+            val intent = Intent(this, LlistatArxius::class.java)
             intent.putExtra("TIPUS_ARXIU", "imatge")
             startActivityForResult(intent, MainActivity.REQUEST_CODE_CERCAR_ARXIU)
         }
         btnReproduirSo.setOnClickListener{
-            val intent = Intent(this, CercarArxius::class.java)
+            val intent = Intent(this, LlistatArxius::class.java)
             intent.putExtra("TIPUS_ARXIU", "so")
             startActivityForResult(intent, MainActivity.REQUEST_CODE_CERCAR_ARXIU)
         }
         ReproduirVideo.setOnClickListener{
-            val intent = Intent(this, CercarArxius::class.java)
+            val intent = Intent(this, LlistatArxius::class.java)
             intent.putExtra("TIPUS_ARXIU", "video")
             startActivityForResult(intent, MainActivity.REQUEST_CODE_CERCAR_ARXIU)
         }
