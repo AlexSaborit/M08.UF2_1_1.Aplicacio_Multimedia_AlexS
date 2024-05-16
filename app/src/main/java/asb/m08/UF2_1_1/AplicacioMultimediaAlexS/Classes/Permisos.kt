@@ -3,7 +3,9 @@ package asb.m08.UF2_1_1.AplicacioMultimediaAlexS.Classes
 import android.Manifest
 import android.app.Activity
 import android.content.pm.PackageManager
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import asb.m08.UF2_1_1.AplicacioMultimediaAlexS.Objectes.Permanent
 
 class Permisos {
     fun checkAndRequestPermissions(activity: Activity): List<String> {
@@ -50,5 +52,15 @@ class Permisos {
         }
 
         return listPermissionsNeeded
+    }
+    fun requestPermissions(activity: Activity, llistatPermisos: List<String>, REQUEST_CODE: Int) {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            val permissionsNeeded = llistatPermisos
+            if (permissionsNeeded.isNotEmpty()) {
+                ActivityCompat.requestPermissions(activity, permissionsNeeded.toTypedArray(),
+                    REQUEST_CODE
+                )
+            }
+        }
     }
 }
