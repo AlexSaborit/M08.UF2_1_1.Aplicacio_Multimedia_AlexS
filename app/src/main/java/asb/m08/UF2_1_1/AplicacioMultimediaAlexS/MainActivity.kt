@@ -2,21 +2,27 @@ package asb.m08.UF2_1_1.AplicacioMultimediaAlexS
 
 import android.app.Activity
 import android.content.ActivityNotFoundException
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
+import androidx.core.content.FileProvider
 import asb.m08.UF2_1_1.AplicacioMultimediaAlexS.Classes.Permisos
-import asb.m08.UF2_1_1.AplicacioMultimediaAlexS.Objectes.Audio_IO
 import asb.m08.UF2_1_1.AplicacioMultimediaAlexS.Objectes.Permanent
-import asb.m08.UF2_1_1.AplicacioMultimediaAlexS.Objectes.Picture_IO
-import asb.m08.UF2_1_1.AplicacioMultimediaAlexS.Objectes.Video_IO
+import java.io.File
+import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
 
@@ -29,6 +35,8 @@ class MainActivity : AppCompatActivity() {
         val REQUEST_PERMISSIONS_image = 10
         val REQUEST_PERMISSIONS_audio = 20
         val REQUEST_PERMISSIONS_video = 30
+
+        private var audioURI: Uri? = null
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,7 +70,8 @@ class MainActivity : AppCompatActivity() {
             //Video_IO.startVideoCaptureProcess(this)
         }
         btnCapturarSo.setOnClickListener {
-            Audio_IO.startAudioCaptureProcess(this)
+            //Audio_IO.startAudioCaptureProcess(this)
+            dispatchRecordAudioIntent(this)
         }
         btnVisualitzarReproduir.setOnClickListener {
             val intent = Intent(this, Tria_Arxiu::class.java)
@@ -81,19 +90,22 @@ class MainActivity : AppCompatActivity() {
             handlePermissionsResult(
                 grantResults,
                 "Permissions Denied for Picture",
-                { Picture_IO.dispatchTakePictureIntent(this) }
+                //{ Picture_IO.dispatchTakePictureIntent(this) }
+                { dispatchTakePictureIntent() }
             )
         } else if (requestCode == REQUEST_PERMISSIONS_audio) {
             handlePermissionsResult(
                 grantResults,
                 "Permissions Denied for Audio",
-                { Audio_IO.dispatchRecordAudioIntent(this) }
+                //{ Audio_IO.dispatchRecordAudioIntent(this) }
+                { dispatchRecordAudioIntent(this) }
             )
         } else if (requestCode == REQUEST_PERMISSIONS_video) {
             handlePermissionsResult(
                 grantResults,
                 "Permissions Denied for Video",
-                { Video_IO.dispatchRecordVideoIntent(this) }
+                //{ Video_IO.dispatchRecordVideoIntent(this) }
+                { dispatchTakeVideoIntent() }
             )
         }
     }
@@ -115,7 +127,7 @@ class MainActivity : AppCompatActivity() {
 
         when (requestCode) {
             REQUEST_IMAGE_CAPTURE -> handleActivityResult(this, requestCode, resultCode, data)
-            REQUEST_AUDIO_CAPTURE -> Audio_IO.handleActivityResult(this, requestCode, resultCode, data)
+            REQUEST_AUDIO_CAPTURE -> handleActivityResult(this, requestCode, resultCode, data)
             REQUEST_VIDEO_CAPTURE -> handleActivityResult(this, requestCode, resultCode, data)
             REQUEST_CODE_CERCAR_ARXIU -> if (resultCode == RESULT_OK) {
                 val arxiuSeleccionat = data?.getStringExtra("ARXIU_SELECCIONAT")
@@ -129,7 +141,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-    private fun dispatchTakePictureIntent() {
+    /*private fun dispatchTakePictureIntent() {
         //https://developer.android.com/media/camera/camera-intents
         val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         try {
@@ -138,8 +150,8 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this, "error foto cam intent", Toast.LENGTH_SHORT).show()
             // display error state to the user
         }
-    }
-    private fun dispatchTakeVideoIntent() {
+    }*/
+    /*private fun dispatchTakeVideoIntent() {
         Intent(MediaStore.ACTION_VIDEO_CAPTURE).also { takeVideoIntent ->
             takeVideoIntent.resolveActivity(packageManager)?.also {
                 startActivityForResult(takeVideoIntent, REQUEST_VIDEO_CAPTURE)
@@ -148,19 +160,43 @@ class MainActivity : AppCompatActivity() {
                 //display error state to the user
             }
         }
-    }
+    }*/
+    /*fun dispatchRecordAudioIntent(activity: Activity) {
+        Intent(MediaStore.Audio.Media.RECORD_SOUND_ACTION).also { recordSoundIntent ->
+            recordSoundIntent.resolveActivity(activity.packageManager)?.also {
+                try {
+                    val audioFile: File? = createAudioFile(activity)
+                    audioFile?.also {
+                        audioURI = Uri.fromFile(audioFile)
+                        recordSoundIntent.putExtra(MediaStore.EXTRA_OUTPUT, audioURI)
+                        activity.startActivityForResult(recordSoundIntent,
+                            REQUEST_AUDIO_CAPTURE
+                        )
+                    }
+                } catch (ex: IOException) {
+                    Toast.makeText(activity, "Error creating audio file", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }*/
     fun handleActivityResult(activity: Activity, requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
             showImageNameDialog(activity)
-        } else if (requestCode == Audio_IO.REQUEST_AUDIO_CAPTURE && resultCode == Activity.RESULT_OK) {
+        } else if (requestCode == REQUEST_AUDIO_CAPTURE && resultCode == Activity.RESULT_OK) {
             showAudioNameDialog(activity)
-        } else if (requestCode == Video_IO.REQUEST_VIDEO_CAPTURE && resultCode == Activity.RESULT_OK) {
+        } else if (requestCode == REQUEST_VIDEO_CAPTURE && resultCode == Activity.RESULT_OK) {
             showVideoNameDialog(activity)
         } else if (resultCode == Activity.RESULT_CANCELED) {
             Toast.makeText(activity, "capture cancelled", Toast.LENGTH_SHORT).show()
         }
-    }
-
+    }/*
+    @Throws(IOException::class)
+    private fun createAudioFile(context: Context): File {
+        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
+        val audioFileName = "AUDIO_${timeStamp}_"
+        val storageDir: File? = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC)
+        return File.createTempFile(audioFileName, ".mp3", storageDir)
+    }*/
     private fun showImageNameDialog(activity: Activity) {
         val builder = AlertDialog.Builder(activity)
         builder.setTitle("Enter image name")
@@ -237,4 +273,55 @@ class MainActivity : AppCompatActivity() {
         // Implementa la lògica per guardar la imatge amb el nom especificat
         Toast.makeText(activity, "Image saved as: $imageName", Toast.LENGTH_SHORT).show()
     }
+    fun dispatchTakePictureIntent() {
+        // No es crida directament Picture_IO, sinó que es fa servir l'intent directament aquí
+        val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        try {
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
+        } catch (e: ActivityNotFoundException) {
+            Toast.makeText(this, "error foto cam intent", Toast.LENGTH_SHORT).show()
+            // display error state to the user
+        }
+    }
+
+    fun dispatchTakeVideoIntent() {
+        // No es crida directament Video_IO, sinó que es fa servir l'intent directament aquí
+        Intent(MediaStore.ACTION_VIDEO_CAPTURE).also { takeVideoIntent ->
+            takeVideoIntent.resolveActivity(packageManager)?.also {
+                startActivityForResult(takeVideoIntent, REQUEST_VIDEO_CAPTURE)
+            } ?: run {
+                Toast.makeText(this, "error video cam intent", Toast.LENGTH_SHORT).show()
+                //display error state to the user
+            }
+        }
+    }
+
+    fun dispatchRecordAudioIntent(activity: Activity) {
+        // Es crida la funció de creació de fitxer d'àudio dins d'aquesta classe
+        Intent(MediaStore.Audio.Media.RECORD_SOUND_ACTION).also { recordSoundIntent ->
+            recordSoundIntent.resolveActivity(activity.packageManager)?.also {
+                try {
+                    val audioFile: File? = createAudioFile(activity)
+                    audioFile?.also {
+                        audioURI = Uri.fromFile(audioFile)
+                        recordSoundIntent.putExtra(MediaStore.EXTRA_OUTPUT, audioURI)
+                        activity.startActivityForResult(recordSoundIntent, REQUEST_AUDIO_CAPTURE)
+                    }
+                } catch (ex: IOException) {
+                    Toast.makeText(activity, "Error creating audio file", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+    fun createAudioFile(context: Context): File {
+        // S'utilitza la carpeta d'àudio emmagatzemada a Permanent.kt
+        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
+        val audioFileName = "AUDIO_${timeStamp}_"
+        val storageDir: File? = Permanent.audioDir
+        return File.createTempFile(audioFileName, ".mp3", storageDir)
+    }
+
 }
+
+
